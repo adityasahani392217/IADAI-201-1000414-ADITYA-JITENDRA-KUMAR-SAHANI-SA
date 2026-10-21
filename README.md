@@ -232,8 +232,8 @@ pytest -v
 ### Quickstart Setup
 ```bash
 # 1. Clone repository
-git clone https://github.com/adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA.git
-cd IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA
+git clone https://github.com/adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA.git
+cd IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA
 
 # 2. Create and activate virtual environment
 python -m venv .venv
@@ -255,7 +255,7 @@ Access the application in your browser at `http://localhost:8501`.
 ## ☁️ 10. Deployment on Streamlit Community Cloud
 
 StockSense Pro is pre-configured for instant zero-configuration deployment on **Streamlit Community Cloud**:
-1. Repository: `adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA`
+1. Repository: `adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA`
 2. Main file path: `app.py`
 3. Dependencies: `requirements.txt` includes `opencv-python-headless` for headless cloud container compatibility.
 4. Model weights: Packaged within `weights/stocksense_yolov8n.pt` (~6.2 MB), loading natively into cloud RAM without external API keys.

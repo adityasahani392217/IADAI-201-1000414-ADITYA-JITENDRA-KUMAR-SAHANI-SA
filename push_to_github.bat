@@ -15,7 +15,7 @@ if %errorlevel% neq 0 (
     echo.
     echo ========================================================
     echo  SUCCESS! StockSense Pro successfully pushed to:
-    echo  https://github.com/adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA
+    echo  https://github.com/adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA
     echo ========================================================
 )
 pause
