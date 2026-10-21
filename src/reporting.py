@@ -70,3 +70,33 @@ class ParkingReportGenerator:
         save_path = target_dir / filename
         cv2.imwrite(str(save_path), frame)
         return save_path
+
+
+class AuditReportGenerator(ParkingReportGenerator):
+    """
+    Unified audit report and manifest generator.
+    """
+
+    def export_space_manifest(self, evaluated_slots: List[Dict[str, Any]], output_path: Optional[Path] = None) -> Path:
+        target = output_path or (settings.REPORTS_DIR / "parkvision_space_manifest.csv")
+        return self.export_slots_to_csv(evaluated_slots, target)
+
+    def export_telemetry_history(self, history_records_or_df: Any, output_path: Optional[Path] = None) -> Path:
+        target = output_path or (settings.REPORTS_DIR / "parkvision_telemetry_history.csv")
+        if isinstance(history_records_or_df, list):
+            import pandas as pd
+            if history_records_or_df:
+                df = pd.DataFrame(history_records_or_df)
+            else:
+                df = pd.DataFrame(columns=[
+                    "timestamp", "total_slots", "occupied_slots", "available_slots", "uncertain_slots", "occupancy_rate_pct"
+                ])
+        else:
+            df = history_records_or_df
+        return self.export_telemetry_history_to_csv(df, target)
+
+
+# Class Aliases
+ParkingReportGenerator = AuditReportGenerator
+__all__ = ["AuditReportGenerator", "ParkingReportGenerator"]
+

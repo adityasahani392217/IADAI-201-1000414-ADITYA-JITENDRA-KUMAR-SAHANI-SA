@@ -18,6 +18,11 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
+# Ensure project root directory is first in sys.path for Streamlit Cloud & local execution
+ROOT_DIR = Path(__file__).resolve().parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -29,7 +34,13 @@ from config import settings
 from src.vehicle_detector import VehicleDetector, PKLotSpaceDetector
 from src.parking_layout import ParkingLayoutManager
 from src.parking_occupancy import ParkingOccupancyClassifier
-from src.video_processor import VideoAnnotationRenderer
+try:
+    from src.video_processor import VideoAnnotationRenderer, ParkingVisualizer
+except Exception:
+    import src.video_processor as _vp
+    VideoAnnotationRenderer = getattr(_vp, "VideoAnnotationRenderer", getattr(_vp, "ParkingVisualizer", None))
+    ParkingVisualizer = VideoAnnotationRenderer
+
 from src.camera_manager import CameraStreamManager
 from src.analytics import ParkingAnalyticsEngine
 from src.reporting import AuditReportGenerator

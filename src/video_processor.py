@@ -11,11 +11,17 @@ import cv2
 import numpy as np
 
 import sys
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+from pathlib import Path
+
+# Ensure root directory in sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 from config import settings
 
 
-class ParkingVisualizer:
+class VideoAnnotationRenderer:
     """
     Renders high-contrast, professional visual overlays on parking lot frames.
     """
@@ -188,5 +194,6 @@ class ParkingVisualizer:
 
 
 # Export Class Alias
-VideoAnnotationRenderer = ParkingVisualizer
+ParkingVisualizer = VideoAnnotationRenderer
+__all__ = ["VideoAnnotationRenderer", "ParkingVisualizer"]
 

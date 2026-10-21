@@ -7,7 +7,7 @@ and slot-level utilization tracking.
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 import pandas as pd
 import numpy as np
@@ -125,14 +125,14 @@ class ParkingAnalyticsTracker:
         if total > 0:
             if occupied >= total:
                 alerts.append({
-                    "level": "critical",
+                    "level": "CRITICAL",
                     "title": "Parking Facility at Full Capacity (100%)",
                     "message": "All designated bays are occupied. Divert incoming traffic to secondary parking zones.",
                     "action": "Trigger external digital signage: LOT FULL."
                 })
             elif rate >= (settings.DEFAULT_HIGH_CAPACITY_THRESHOLD * 100.0):
                 alerts.append({
-                    "level": "warning",
+                    "level": "WARNING",
                     "title": f"High Capacity Warning ({rate:.0f}%)",
                     "message": f"Parking occupancy exceeded {settings.DEFAULT_HIGH_CAPACITY_THRESHOLD*100:.0f}% threshold. Limited bays remaining.",
                     "action": "Alert ground security staff to manage entrance lanes."
@@ -140,10 +140,68 @@ class ParkingAnalyticsTracker:
 
             if uncertain >= 2:
                 alerts.append({
-                    "level": "info",
+                    "level": "INFO",
                     "title": f"{uncertain} Spaces in Uncertain State",
                     "message": "Detections near bay boundaries are ambiguous. Vehicles may be straddling lines or partially occluded.",
                     "action": "Verify bays via manual patrol or adjust camera angle."
                 })
 
         return alerts
+
+
+class ParkingAnalyticsEngine(ParkingAnalyticsTracker):
+    """
+    Unified analytics engine providing real-time logging, threshold alerts,
+    and historical telemetry.
+    """
+
+    def __init__(self, max_records: int = 2000):
+        super().__init__(max_records)
+        self.time_series: List[Dict[str, Any]] = self.history_records
+        self.recent_alerts: List[Dict[str, Any]] = []
+
+    def log_frame_event(
+        self,
+        eval_slots: List[Dict[str, Any]],
+        detections: List[Dict[str, Any]],
+        frame_shape: Tuple[int, int] = (720, 1280),
+        fps: float = 30.0,
+        latency_ms: float = 10.0
+    ) -> None:
+        """Convenience method to log an evaluated frame state."""
+        total = len(eval_slots)
+        occupied = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_OCCUPIED)
+        available = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_AVAILABLE)
+        uncertain = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_UNCERTAIN)
+        rate = (occupied / max(1, total)) * 100.0
+
+        summary = {
+            "total_slots": total,
+            "occupied_slots": occupied,
+            "available_slots": available,
+            "uncertain_slots": uncertain,
+            "occupancy_rate_pct": round(rate, 1)
+        }
+        self.record_frame_telemetry(summary, eval_slots, fps=fps, latency_ms=latency_ms)
+        self.time_series = self.history_records
+
+    def check_alerts(self, total_slots: int, occupied_count: int, uncertain_count: int = 0) -> List[Dict[str, str]]:
+        """Convenience wrapper for alert checking."""
+        summary = {
+            "total_slots": total_slots,
+            "occupied_slots": occupied_count,
+            "uncertain_slots": uncertain_count,
+            "occupancy_rate_pct": (occupied_count / max(1, total_slots)) * 100.0
+        }
+        alerts = self.check_operational_alerts(summary)
+        for a in alerts:
+            self.recent_alerts.append(a)
+        return alerts
+
+    def get_recent_alerts(self, limit: int = 10) -> List[Dict[str, str]]:
+        """Return the most recent alerts."""
+        return self.recent_alerts[-limit:]
+
+
+# Export class aliases
+__all__ = ["ParkingAnalyticsEngine", "ParkingAnalyticsTracker"]
