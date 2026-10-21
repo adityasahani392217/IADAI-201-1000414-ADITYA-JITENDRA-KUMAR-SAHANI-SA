@@ -132,3 +132,61 @@ class ParkingVisualizer:
             "is_near_capacity": occupancy_rate >= (settings.DEFAULT_HIGH_CAPACITY_THRESHOLD * 100.0),
             "is_full": occupied >= total and total > 0
         }
+
+    @classmethod
+    def render_annotations(
+        cls,
+        frame: np.ndarray,
+        evaluated_slots: List[Dict[str, Any]],
+        detected_vehicles: List[Dict[str, Any]],
+        show_slots: bool = True,
+        show_boxes: bool = True,
+        show_summary: bool = True
+    ) -> np.ndarray:
+        """Alias for draw_parking_overlay with standard parameter names."""
+        return cls.draw_parking_overlay(
+            frame=frame,
+            evaluated_slots=evaluated_slots if show_slots else [],
+            detected_vehicles=detected_vehicles if show_boxes else [],
+            show_vehicles=show_boxes,
+            show_slot_labels=show_slots
+        )
+
+    @staticmethod
+    def render_direct_spaces(
+        frame: np.ndarray,
+        detected_spaces: List[Dict[str, Any]],
+        alpha_fill: float = 0.25
+    ) -> np.ndarray:
+        """
+        Render direct space bounding boxes from PKLot trained model:
+        Green for space-empty, Red for space-occupied.
+        """
+        if frame is None or frame.size == 0:
+            return frame
+        canvas = frame.copy()
+        overlay = frame.copy()
+
+        for sp in detected_spaces:
+            x1, y1, x2, y2 = sp["bbox"]
+            st = sp.get("status", "available")
+            conf = sp.get("confidence", 0.0)
+            sid = sp.get("id", "SP")
+            
+            # Green (Available) or Red (Occupied)
+            color = (74, 163, 22) if st == "available" else (38, 38, 220)
+            cv2.rectangle(overlay, (x1, y1), (x2, y2), color, -1)
+            cv2.rectangle(canvas, (x1, y1), (x2, y2), color, 2, lineType=cv2.LINE_AA)
+
+            label = f"{sid}: {st[:3].upper()} {int(conf * 100)}%"
+            (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.35, 1)
+            cv2.rectangle(canvas, (x1, max(0, y1 - lh - 4)), (x1 + lw + 4, y1), color, -1)
+            cv2.putText(canvas, label, (x1 + 2, y1 - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (255, 255, 255), 1, cv2.LINE_AA)
+
+        cv2.addWeighted(overlay, alpha_fill, canvas, 1.0 - alpha_fill, 0, canvas)
+        return canvas
+
+
+# Export Class Alias
+VideoAnnotationRenderer = ParkingVisualizer
+

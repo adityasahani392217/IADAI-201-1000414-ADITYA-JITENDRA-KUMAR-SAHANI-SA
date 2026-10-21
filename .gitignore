@@ -35,3 +35,9 @@ htmlcov/
 temp_*
 test_real.jpg
 test_parking.png
+
+# Training runs & heavy raw dataset archives
+runs/
+data/pklot/
+temp_meta/
+

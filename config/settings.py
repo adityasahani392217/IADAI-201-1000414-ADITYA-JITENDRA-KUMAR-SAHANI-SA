@@ -84,6 +84,8 @@ DEFAULT_HIGH_CAPACITY_THRESHOLD = 0.85 # Alert when 85% capacity reached
 # Model Weights
 DEFAULT_MODEL_NAME = "yolov8n.pt"
 MODEL_WEIGHTS_PATH = WEIGHTS_DIR / "yolov8n.pt"
+PKLOT_MODEL_WEIGHTS_PATH = WEIGHTS_DIR / "pklot_yolov8n.pt"
+PKLOT_CLASSES = {0: "space-empty", 1: "space-occupied"}
 
 # Demo Presets: Default 12-Slot Ground Lot Configuration (Normalized [0.0, 1.0])
 DEFAULT_OUTDOOR_PRESET = [

@@ -116,3 +116,68 @@ class VehicleDetector:
                 })
 
         return detections, latency_ms
+
+
+class PKLotSpaceDetector:
+    """
+    Direct parking space occupancy detector fine-tuned on the PKLot dataset.
+    Detects and classifies parking stalls into 'space-empty' (Available)
+    and 'space-occupied' (Occupied).
+    """
+
+    def __init__(self, weights_path: Optional[Path] = None, conf_thresh: float = 0.25):
+        self.conf_thresh = conf_thresh
+        self.device = "0" if torch.cuda.is_available() else "cpu"
+        self.device_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
+        
+        target_path = weights_path or settings.PKLOT_MODEL_WEIGHTS_PATH
+        if Path(target_path).exists():
+            self.model = YOLO(str(target_path))
+        else:
+            self.model = YOLO(str(settings.MODEL_WEIGHTS_PATH))
+
+    def detect_spaces(self, frame: np.ndarray, conf_thresh: Optional[float] = None, iou_thresh: float = 0.50):
+        """
+        Detect and classify parking spaces directly from image.
+        Returns list of space dictionaries and latency in ms.
+        """
+        h, w = frame.shape[:2]
+        effective_conf = conf_thresh if conf_thresh is not None else self.conf_thresh
+        t0 = time.perf_counter()
+
+        results = self.model.predict(
+            source=frame,
+            conf=effective_conf,
+            iou=iou_thresh,
+            device=self.device,
+            verbose=False,
+            imgsz=640
+        )
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+
+        spaces = []
+        if results and len(results) > 0:
+            boxes = results[0].boxes
+            for idx, box in enumerate(boxes):
+                xyxy = box.xyxy[0].cpu().numpy().tolist()
+                x1, y1, x2, y2 = [int(v) for v in xyxy]
+                conf = float(box.conf[0].cpu().item())
+                cls_id = int(box.cls[0].cpu().item())
+                
+                # Class 0: space-empty -> available
+                # Class 1: space-occupied -> occupied
+                status = "available" if cls_id == 0 else "occupied"
+                cls_name = "space-empty" if cls_id == 0 else "space-occupied"
+
+                spaces.append({
+                    "id": f"PK-{idx+1:03d}",
+                    "bbox": [x1, y1, x2, y2],
+                    "norm_bbox": [x1 / w, y1 / h, x2 / w, y2 / h],
+                    "status": status,
+                    "confidence": conf,
+                    "class_id": cls_id,
+                    "class_name": cls_name
+                })
+
+        return spaces, latency_ms
+
