@@ -123,9 +123,9 @@ class VideoAnnotationRenderer:
     def compute_occupancy_summary(evaluated_slots: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate high-level occupancy counts and capacity percentage."""
         total = len(evaluated_slots)
-        occupied = sum(1 for s in evaluated_slots if s["status"] == settings.SLOT_STATUS_OCCUPIED)
-        available = sum(1 for s in evaluated_slots if s["status"] == settings.SLOT_STATUS_AVAILABLE)
-        uncertain = sum(1 for s in evaluated_slots if s["status"] == settings.SLOT_STATUS_UNCERTAIN)
+        occupied = sum(1 for s in evaluated_slots if s.get("status") == settings.SLOT_STATUS_OCCUPIED)
+        available = sum(1 for s in evaluated_slots if s.get("status") == settings.SLOT_STATUS_AVAILABLE)
+        uncertain = sum(1 for s in evaluated_slots if s.get("status") == settings.SLOT_STATUS_UNCERTAIN)
 
         occupancy_rate = (occupied / max(1, total)) * 100.0
 

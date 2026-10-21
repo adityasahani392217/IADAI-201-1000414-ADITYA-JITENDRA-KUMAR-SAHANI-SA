@@ -59,8 +59,8 @@ class ParkingAnalyticsTracker:
         # Track per-slot duration
         if dt < 5.0:  # Ignore large pause gaps
             for slot in evaluated_slots:
-                sid = slot["id"]
-                st = slot["status"]
+                sid = slot.get("id", "SP")
+                st = slot.get("status", settings.SLOT_STATUS_AVAILABLE)
                 if sid not in self.slot_state_durations:
                     self.slot_state_durations[sid] = {"occupied_sec": 0.0, "available_sec": 0.0, "uncertain_sec": 0.0}
                 if st == settings.SLOT_STATUS_OCCUPIED:
@@ -170,9 +170,9 @@ class ParkingAnalyticsEngine(ParkingAnalyticsTracker):
     ) -> None:
         """Convenience method to log an evaluated frame state."""
         total = len(eval_slots)
-        occupied = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_OCCUPIED)
-        available = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_AVAILABLE)
-        uncertain = sum(1 for s in eval_slots if s["status"] == settings.SLOT_STATUS_UNCERTAIN)
+        occupied = sum(1 for s in eval_slots if s.get("status") == settings.SLOT_STATUS_OCCUPIED)
+        available = sum(1 for s in eval_slots if s.get("status") == settings.SLOT_STATUS_AVAILABLE)
+        uncertain = sum(1 for s in eval_slots if s.get("status") == settings.SLOT_STATUS_UNCERTAIN)
         rate = (occupied / max(1, total)) * 100.0
 
         summary = {

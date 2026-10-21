@@ -40,14 +40,22 @@ class ParkingReportGenerator:
             writer.writerow(["Slot_ID", "Section", "Slot_Type", "Occupancy_Status", "IoA_Overlap", "Confidence", "Vehicle_Type"])
             
             for s in evaluated_slots:
-                v_type = s["vehicle"]["class_name"] if s.get("vehicle") else "None"
+                v_type = s["vehicle"]["class_name"] if s.get("vehicle") and isinstance(s.get("vehicle"), dict) else "None"
+                sid = str(s.get("id", "SP"))
+                sec = s.get("section", sid[0] if sid else "A")
+                stype = s.get("type", "Standard")
+                raw_status = s.get("status", "Available")
+                status_str = raw_status.capitalize() if isinstance(raw_status, str) else str(raw_status)
+                ioa_val = s.get("ioa", 0.0)
+                conf_val = s.get("confidence", 1.0)
+                
                 writer.writerow([
-                    s["id"],
-                    s.get("section", s["id"][0]),
-                    s.get("type", "Standard"),
-                    s["status"].capitalize(),
-                    s.get("ioa", 0.0),
-                    s.get("confidence", 1.0),
+                    sid,
+                    sec,
+                    stype,
+                    status_str,
+                    ioa_val,
+                    conf_val,
                     v_type
                 ])
 

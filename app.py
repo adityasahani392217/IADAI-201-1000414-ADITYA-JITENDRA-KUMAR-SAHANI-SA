@@ -1210,8 +1210,16 @@ elif page == "📑 Audit Reports & Export":
         """, unsafe_allow_html=True)
 
         # Generate fresh CSVs
-        slots = layout_manager.get_slots()
-        manifest_csv_path = reporting.export_space_manifest(slots)
+        raw_slots = layout_manager.get_slots()
+        manifest_slots = []
+        for s in raw_slots:
+            item = dict(s)
+            item.setdefault("status", "available")
+            item.setdefault("ioa", 0.0)
+            item.setdefault("confidence", 1.0)
+            manifest_slots.append(item)
+
+        manifest_csv_path = reporting.export_space_manifest(manifest_slots)
         telemetry_csv_path = reporting.export_telemetry_history(analytics.time_series)
 
         if manifest_csv_path.exists():

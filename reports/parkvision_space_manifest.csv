@@ -1,0 +1,8 @@
+# ParkVision AI - Space Occupancy Manifest
+# Generated At,2026-10-21 15:13:59
+# Student,Aditya Jitendra Kumar Sahani (ID: 1000414)
+# Institution,Aspee Nutan Academy
+
+Slot_ID,Section,Slot_Type,Occupancy_Status,IoA_Overlap,Confidence,Vehicle_Type
+P01,P,Standard,Available,0.0,1.0,None
+P02,P,Standard,Available,0.0,1.0,None
