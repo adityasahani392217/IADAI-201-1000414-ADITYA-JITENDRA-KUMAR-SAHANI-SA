@@ -37,7 +37,23 @@ In retail store operations, **on-shelf product availability** directly dictates 
 
 ---
 
-## 🔬 2. Mandatory Primary Dataset Research & Scientific Critique
+## 👥 2. Target User Personas & Practical Retail Workflows
+
+StockSense Pro is engineered specifically around the distinct operational needs of 3 retail store personas:
+
+1. **The Store Associate (Floor Staff):**
+   - **Goal:** Rapid visual shelf check before morning and evening rush hours.
+   - **Workflow:** Opens the mobile/tablet app, photographs a shelf, immediately reviews the **Action Priority Queue**, and grabs needed products from the stockroom without navigating technical parameters.
+2. **The Store Manager:**
+   - **Goal:** High-level oversight of aisle replenishment, health status trends, and audit trail records.
+   - **Workflow:** Reviews the **Inspection History** log, evaluates overall shelf health composition (`OPTIMAL`, `WARNING`, `CRITICAL`), identifies chronic stockout bottlenecks in **Operations Summary**, and exports CSV inspection logs for shift handovers.
+3. **The Retail Operations / AI Analyst:**
+   - **Goal:** Rigorous verification of computer vision model accuracy, failure mode diagnostics, and calibration.
+   - **Workflow:** Accesses the **Model & Technical Info** tab to inspect precision/recall curves, mAP@0.5/0.95 benchmarks, confusion matrices, and the **8 Realistic Scenario Testing Matrix**.
+
+---
+
+## 🔬 3. Mandatory Primary Dataset Research & Scientific Critique
 
 As mandated by Section 3 of the assessment brief, we initially investigated the primary required dataset:
 - **Dataset:** [Kaggle — Retail Product Checkout Dataset (RPC)](https://www.kaggle.com/datasets/diyer22/retail-product-checkout-dataset)
@@ -182,15 +198,28 @@ StockSense-Pro/
 
 ## 🧪 8. Automated Testing & Verification
 
-We established a comprehensive testing suite with **15 automated unit and integration tests** using `pytest`:
+We established a comprehensive testing suite with **19 automated unit and integration tests** using `pytest`:
 - **Inventory Engine Tests (`tests/test_inventory_logic.py`):** Verified boundary thresholds (0, 1, 3, 4, 50), inverted threshold exception handling, empty detection lists, count aggregation, and CSV export format.
 - **Preprocessing Tests (`tests/test_preprocessing.py`):** Verified scene hash extraction, coordinate clamping, class mapping, and confirmed **0% cross-split leakage**.
 - **Inference Tests (`tests/test_inference.py`):** Verified model loading, dummy input handling, confidence threshold monotonicity, and exception handling for missing inputs.
+- **Inspection History Tests (`tests/test_history_manager.py`):** Verified persistence, retrieval, history DataFrame generation, and recurring shortage tallies.
 
 Run tests locally:
 ```bash
 pytest -v
 ```
+
+### 🧪 8 Realistic Operational Scenario Audits (Section 11)
+| ID | Operational Scenario | Observed Model Behavior | Verdict | Operational Mitigation Strategy |
+| :---: | :--- | :--- | :---: | :--- |
+| **SC-01** | **Clear Standard Shelf** | Clean detection across multi-tier facings; healthy count. | 🟢 **PASS** | Baseline operational accuracy confirmed. |
+| **SC-02** | **Crowded Shelf Display** | Resolved dense proposals without excessive NMS suppression. | 🟢 **PASS** | NMS IoU threshold calibrated to 0.45. |
+| **SC-03** | **Partially Hidden Products** | Detected visible margins of blocked rear items. | 🔵 **PASS (MIT.)** | Staff advised: 'Retake photo if severe occlusion.' |
+| **SC-04** | **Specular Glare / Exposure** | Perimeter items detected; washed regions flagged. | 🔵 **PASS (MIT.)** | Training HSV jitter mitigates glare wash. |
+| **SC-05** | **Similar Packaging** | Differentiated bottles vs cans via aspect ratio. | 🟢 **PASS** | Geometry features in YOLO split head. |
+| **SC-06** | **Depleted Shelf Facing** | Identified 1-3 items; flagged Low Stock (🟡). | 🟢 **PASS** | Accurately triggers replenishment queue. |
+| **SC-07** | **Bare Shelf / Empty Surface** | 0 detections; triggers CRITICAL (🔴) status. | 🟢 **PASS** | Dispatches immediate backroom restock ticket. |
+| **SC-08** | **Corrupted / Invalid Input** | Error caught cleanly; user diagnostic shown. | 🟢 **PASS** | Validation pre-check blocks malformed files. |
 
 ---
 
