@@ -1196,7 +1196,6 @@ elif page == "📑 Audit Reports & Export":
                 mime="application/pdf",
                 use_container_width=True
             )
-            st.markdown(f"<small style='color:#64748B;'>File size: {len(pdf_bytes)/1024:.1f} KB | Verified with NumberedCanvas & Platypus Flowables</small>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     with rep_col2:
