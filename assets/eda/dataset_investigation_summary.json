@@ -1,0 +1,114 @@
+{
+  "rpc_dataset": {
+    "dataset_name": "Retail Product Checkout (RPC) Dataset",
+    "total_categories": 200,
+    "total_images_in_split": 6000,
+    "total_annotations_in_split": 73602,
+    "macro_categories_count": 17,
+    "macro_distribution": {
+      "puffed_food": 12,
+      "dried_fruit": 9,
+      "dried_food": 9,
+      "instant_drink": 11,
+      "instant_noodles": 12,
+      "dessert": 17,
+      "drink": 15,
+      "alcohol": 11,
+      "milk": 11,
+      "canned_food": 14,
+      "chocolate": 12,
+      "gum": 8,
+      "candy": 10,
+      "seasoner": 12,
+      "personal_hygiene": 10,
+      "tissue": 20,
+      "stationery": 7
+    },
+    "macro_instance_counts": {
+      "alcohol": 3965,
+      "canned_food": 4408,
+      "drink": 6041,
+      "seasoner": 4910,
+      "dessert": 6642,
+      "instant_drink": 3667,
+      "dried_food": 3168,
+      "milk": 3998,
+      "tissue": 6952,
+      "personal_hygiene": 3728,
+      "candy": 3776,
+      "puffed_food": 4763,
+      "chocolate": 4494,
+      "stationery": 2057,
+      "instant_noodles": 4538,
+      "dried_fruit": 3408,
+      "gum": 3087
+    },
+    "sample_resolutions": [
+      [
+        1810,
+        1810
+      ],
+      [
+        1865,
+        1865
+      ],
+      [
+        1801,
+        1801
+      ],
+      [
+        1787,
+        1787
+      ],
+      [
+        1837,
+        1837
+      ]
+    ],
+    "mean_bbox_area": 150813.4050477976,
+    "median_bbox_area": 115122.74220000001,
+    "camera_viewpoint": "Nadir / Top-down Zenith (Automatic Checkout Tray)",
+    "intended_use_case": "Automatic Checkout (ACO) on checkout counter",
+    "license": "Creative Commons CC-BY-NC-SA 4.0"
+  },
+  "shelf_dataset": {
+    "dataset_name": "Retail Shelf Detection Benchmark",
+    "total_files": 1040,
+    "unique_base_scenes": 210,
+    "mean_augmentations_per_scene": 4.95,
+    "raw_class_counts": {
+      "10": 1377,
+      "9": 5716,
+      "4": 606,
+      "1": 1684,
+      "8": 2728,
+      "6": 1710,
+      "7": 6361,
+      "2": 313,
+      "0": 315,
+      "3": 1764,
+      "5": 1489
+    },
+    "standardized_counts": {
+      "Bottle": 3061,
+      "Vegetable": 8444,
+      "Bread": 606,
+      "Pack": 1710,
+      "Snack": 6361,
+      "Box": 2077,
+      "Can": 1489
+    },
+    "total_standardized_annotations": 23748,
+    "mean_aspect_ratio": {
+      "Bottle": 0.871932896168333,
+      "Box": 0.8037902956140369,
+      "Bread": 0.7072271766587047,
+      "Can": 0.7997941890475381,
+      "Pack": 0.9287856024588407,
+      "Snack": 0.9249604636597555,
+      "Vegetable": 1.0860471772054783
+    },
+    "camera_viewpoint": "Frontal Shelf Facing (Multi-tier retail shelving units)",
+    "license": "Creative Commons CC BY 4.0 / MIT"
+  }
+}

@@ -1,0 +1,8 @@
+# StockSense Pro - Ultralytics YOLO Dataset Configuration
+path: C:/Users/PC/Downloads/ML & DL FA 2 (4)/ML & DL FA 2/data/processed
+train: train/images
+val: val/images
+test: test/images
+
+nc: 7
+names: ['Bottle', 'Box', 'Bread', 'Can', 'Pack', 'Snack', 'Vegetable']

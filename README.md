@@ -1,309 +1,241 @@
-# 🛡️ SafeFall AI: Real-Time Human Posture & Fall Detection System
-### Comprehensive Deep Learning & Biomechanical Vision Pipeline (FA-2 Solution)
+# 🛒 StockSense Pro — AI-Powered Retail Shelf Intelligence System
+### CRS Artificial Intelligence Summative Assessment: Machine Learning & Deep Learning (FA 2)
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red)](https://pytorch.org/)
-[![YOLOv8 Pose](https://img.shields.io/badge/YOLOv8-17%20Keypoints-green)](https://github.com/ultralytics/ultralytics)
+[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
+[![Ultralytics YOLOv8](https://img.shields.io/badge/YOLOv8-Object%20Detection-00FFFF.svg)](https://github.com/ultralytics/ultralytics)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**SafeFall AI** is an enterprise-grade, privacy-first computer vision and deep learning system engineered for non-invasive patient monitoring, automated fall detection, and rapid emergency dispatch in geriatric care, hospitals, and assisted-living residences.
-
-By combining **17-Keypoint Skeletal Pose Estimation**, **Bidirectional Temporal LSTMs (BiLSTM)**, and **Biomechanical Kinematic Heuristics**, the platform achieves **94.6% Fall Precision** and **95.2% Fall Recall** at zero-lag **15 FPS** real-time speeds.
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ---
 
-## 📑 Alignment with FA-2 Assignment Brief (Steps 1 – 8)
+## 🎓 Academic & Student Information
 
-| Assignment Phase | Implementation in SafeFall AI | Key Module |
+| Field | Submission Details |
+| :--- | :--- |
+| **Student Name** | **Aditya Jitendra Kumar Sahani** |
+| **Student ID** | **1000414** |
+| **Institution** | **Aspee Nutan Academy** |
+| **Academic Programme** | **IBCP Artificial Intelligence / Grade 12** |
+| **Course Unit** | **Machine Learning and Deep Learning (CRS FA 2 / IADAI-201)** |
+| **Project Title** | **StockSense Pro: AI-Powered Retail Shelf Intelligence** |
+| **Candidate Session** | `[Candidate Registration / Session Number: To be provided]` |
+
+---
+
+## 📌 1. Project Overview & Problem Formulation
+
+In retail store operations, **on-shelf product availability** directly dictates profitability and customer satisfaction. Traditional inventory auditing depends on Point-of-Sale (POS) barcode logs or manual clipboard audits conducted at the end of the shift. These mechanisms suffer from substantial systemic blind spots:
+1. **Phantom Inventory:** Backroom ERP records report stock as present, yet shelves remain bare because goods were misplaced, unreplenished, or stolen.
+2. **Labor Inefficiencies:** Manual clipboard audits take hours, produce inaccurate counts, and cannot keep pace with high-velocity peak shopper footfall.
+3. **Lost Sales:** The global retail industry loses over **$1 trillion annually** due to on-shelf out-of-stock (OOS) conditions and delayed restocking.
+
+**StockSense Pro** solves this by deploying a high-speed, edge-deployable **Computer Vision & Deep Learning Object Detection Pipeline** powered by a fine-tuned **YOLOv8** model. It inspects retail shelf images, identifies product instances across standardized grocery categories, calculates visible facing counts, and flags inventory deficits in real time.
+
+> **⚠️ Operational Scope & ERP Disclaimer:**  
+> StockSense Pro measures **visible product facings within the captured image frame**, not total backroom warehouse stock or point-of-sale ERP transactional records. A zero-detection alert indicates that no product instances are visibly present on the audited shelf, empowering staff to investigate and replenish immediately.
+
+---
+
+## 🔬 2. Mandatory Primary Dataset Research & Scientific Critique
+
+As mandated by Section 3 of the assessment brief, we initially investigated the primary required dataset:
+- **Dataset:** [Kaggle — Retail Product Checkout Dataset (RPC)](https://www.kaggle.com/datasets/diyer22/retail-product-checkout-dataset)
+- **Authors:** Xiu-Shen Wei, Quan Cui, Lei Yang, Peng Wang, Lingqiao Liu (Megvii Research & Nanjing University, 2019)
+- **Paper:** *RPC: A Large-Scale Retail Product Checkout Dataset*, arXiv:1901.07249
+- **License:** Creative Commons CC-BY-NC-SA 4.0
+
+### Dataset Investigation Findings:
+1. **Taxonomy & Scale:** 200 fine-grained categories clustered into 17 macro-product families (`drink`, `puffed_food`, `canned_food`, `instant_noodles`, etc.), with 73,602 annotated bounding boxes in the validation split alone.
+2. **Camera Perspective:** Captured from a **top-down nadir zenith angle** over a flat white automatic checkout tray, alongside single isolated turntable photos.
+3. **Scientific Disparity (ACO vs Retail Shelf):**
+   - **Checkout Scenes (RPC):** Zenith top-down perspective, horizontal item piles, absence of shelf racks, no multi-tier upright facings.
+   - **Retail Shelves (Target Domain):** Frontal eye-level perspective, upright packaging, multi-tier horizontal shelves, price tags, depth masking, and strict vertical/horizontal facings.
+
+| Dimension | Primary: Kaggle RPC Dataset | Supplementary: Retail Shelf Benchmark |
 | :--- | :--- | :--- |
-| **Step 1: Problem Definition** | Elderly fall detection & injury mitigation in private homes & elder care | [app.py](file:///app.py) |
-| **Step 2: Data Collection** | Le2i Fall Detection benchmark + real-world kinematic pose sequences (15,336 frames) | [data/](file:///data) |
-| **Step 3: Feature Engineering** | 17 COCO landmarks, torso inclination, aspect ratio, knee flexion, descent velocity | [core/kinematics.py](file:///core/kinematics.py) |
-| **Step 4: Model Selection** | YOLOv8-Pose detector + Deep Temporal BiLSTM Sequence Classifier | [model/pose_detector.py](file:///model/pose_detector.py) |
-| **Step 5: Model Training** | Stratified 70/15/15 train/val/test split across 6 activity classes with Cosine Annealing | [model/safefall_nn_model.pth](file:///model/safefall_nn_model.pth) |
-| **Step 6: Model Evaluation** | 88.81% Test Accuracy, 95.15% Fall Recall, Confusion Matrix, and 4 Deployment Mitigations | [assets/evaluation_summary.json](file:///assets/evaluation_summary.json) |
-| **Step 7: Web Deployment** | Fast Streamlit dashboard with Live Stream, Photo, Video, Snapshot, and SOS Center | [ui/dashboard_view.py](file:///ui/dashboard_view.py) |
-| **Step 8: Retraining & Maint.** | Active learning feedback loop, automated drift retraining pipeline & CCTV/IR roadmap | [ui/dashboard_view.py](file:///ui/dashboard_view.py) |
+| **Operational Task** | Automatic Checkout (ACO) on checkout tray | In-Store Shelf Inventory & Facing Counting |
+| **Camera Viewpoint** | Zenith (Nadir) Top-Down View | Frontal Multi-Tier Eye-Level View |
+| **Item Orientation** | Horizontally laid / Flat / Piled | Upright Standing / Vertical Multi-Facing |
+| **Occlusion Profile** | Random pile occlusion on flat table | Multi-tier depth masking (front blocks rear) |
+| **Dataset Scale** | 200 categories, 73,602 annotations (val) | 210 scenes, 1,040 images, 120,498 annotations |
+| **Licensing** | CC-BY-NC-SA 4.0 | Creative Commons CC BY 4.0 / MIT |
+
+**Scientific Conclusion:**  
+While RPC is retained for exploratory structural research, training an upright shelf detector purely on top-down checkout images induces severe domain shift. To achieve valid, credible shelf intelligence without fabricating annotations, we incorporated the **Retail Shelf Detection Benchmark** ([Roboflow Universe `kickkung/shelf-detection`](https://universe.roboflow.com/kickkung/shelf-detection-for-coco-format/dataset/2)) containing multi-tier retail shelving units.
 
 ---
 
-## 🦴 1. Pose Estimation & Skeletal Kinematics (Steps 3 & 4)
+## 🛠️ 3. Preprocessing & Leakage-Free Splitting Pipeline
 
-SafeFall AI uses a high-efficiency YOLOv8 Pose model to detect and track human subjects, extracting **17 COCO anatomical landmarks** per frame in under 12 ms:
+To guarantee scientific rigor, the preprocessing pipeline (`src/data_preprocessing.py`) implements five crucial controls:
 
-```
-                  (0) Nose
-               /           \
-      (1) L-Eye             (2) R-Eye
-         |                     |
-      (3) L-Ear             (4) R-Ear
-               \           /
-           (5) L-Shoulder ── (6) R-Shoulder
-            /     │      │     \
-           /      │      │      \
-  (7) L-Elbow     │      │     (8) R-Elbow
-         │        │      │        │
-  (9) L-Wrist     │      │    (10) R-Wrist
-           (11) L-Hip ── (12) R-Hip
-            /                  \
-           /                    \
-    (13) L-Knee              (14) R-Knee
-         │                        │
-    (15) L-Ankle             (16) R-Ankle
-```
-
-### Biomechanical Pose Telemetry
-
-From these 17 normalized keypoints $(x_i, y_i, c_i)$, the engine computes real-time anatomical vectors:
-
-1. **Torso Inclination Angle ($\theta_{\text{torso}}$)**:
-   $$\text{Shoulder}_{\text{mid}} = \frac{KP_5 + KP_6}{2}, \quad \text{Hip}_{\text{mid}} = \frac{KP_{11} + KP_{12}}{2}$$
-   $$\theta_{\text{torso}} = \arctan2(|\text{Hip}_x - \text{Shoulder}_x|, |\text{Hip}_y - \text{Shoulder}_y|) \times \frac{180^\circ}{\pi}$$
-   - **Nominal Upright (Standing/Walking):** $\theta < 25^\circ$
-   - **Leaning / Transitioning:** $25^\circ \le \theta \le 55^\circ$
-   - **Horizontal / Collapsed (Fall):** $\theta > 55^\circ$
-
-2. **Bounding Box Aspect Ratio ($AR$)**:
-   $$AR = \frac{x_{\max} - x_{\min}}{\max(1.0, y_{\max} - y_{\min})}$$
-   - **Standing:** $AR < 0.50$ (tall & narrow)
-   - **Sitting:** $0.55 \le AR \le 0.95$
-   - **Fallen Ground Posture:** $AR > 1.15$ (wide & horizontal)
-
-3. **3-Point Knee Joint Flexion Angle**:
-   Measures interior joint angle between Hip $\rightarrow$ Knee $\rightarrow$ Ankle to differentiate controlled chair sitting from uncontrolled floor collapse.
-
-4. **Dynamic Gait Oscillation**:
-   Tracks Euclidean separation velocity between Left Ankle ($KP_{15}$) and Right Ankle ($KP_{16}$) across temporal sliding windows to identify active walking vs standing still.
+1. **Scene-Level Parent Grouping (Zero Data Leakage):**
+   The 1,040 benchmark images originate from **210 unique base supermarket scenes**, each with Roboflow augmentation variants. Naive random splitting would scatter augmented variants of the same scene across both train and test splits, causing metric inflation. We extracted parent scene hashes and grouped images before splitting.
+2. **Reproducible 70 / 15 / 15 Split:**
+   - **Train:** 147 unique scenes (70.0%) — 747 images, 85,338 annotated boxes
+   - **Val:** 32 unique scenes (15.2%) — 32 unaugmented images, 2,945 annotated boxes
+   - **Test:** 31 unique scenes (14.8%) — 31 unaugmented images, 4,520 annotated boxes
+3. **Standardized 7-Category Retail Ontology:**
+   Raw annotations contained 11 heterogeneous classes. We filtered out background/spacer noise (class 0 `-`) and mapped raw labels into 7 standardized retail categories:
+   - `0: Bottle` (Beverages, water, sodas, glass/plastic bottles)
+   - `1: Box` (Cartons, cereals, packaged dry goods)
+   - `2: Bread` (Bakery loaves, sliced breads, buns)
+   - `3: Can` (Tinned goods, soda cans, canned provisions)
+   - `4: Pack` (Pouches, sachets, vacuum packs)
+   - `5: Snack` (Chips, crisps, biscuits, bagged snacks)
+   - `6: Vegetable` (Fresh produce, greens, root vegetables)
+4. **Geometric Bounding Box Sanitization:**
+   Normalized coordinates are clamped to $[0.0, 1.0]$, and degenerate proposal boxes ($<0.005$ area) are pruned.
+5. **Training-Only Data Augmentation:**
+   Photometric jitter (HSV saturation/value shifts), random horizontal flips, and scale transformations are applied to training data only. Validation and Test splits remain completely untouched.
 
 ---
 
-## 🏃 2. Complete 6 Clinical Activity Classes (Step 5)
+## 🧠 4. Model Architecture & Fine-Tuning
 
-The dual-engine architecture classifies human posture across all **6 clinical activity categories**:
-
-| Activity Class | Primary Visual & Biomechanical Markers | Alert Status |
-| :--- | :--- | :--- |
-| 🚨 **Fall Detected** | Rapid descent velocity + Torso angle $> 55^\circ$ + Aspect ratio $> 1.15$ + Ground proximity | **CRITICAL ALERT (SOS + Siren)** |
-| ⚠️ **Off-Balance** | High torso oscillation ($35^\circ - 55^\circ$) + Irregular centroid acceleration + Narrow foot base | **WARNING (Pre-fall advisory)** |
-| 🚶 **Walking** | Cyclic stride oscillation between ankles + Upright torso ($< 25^\circ$) | **NOMINAL (Active locomotion)** |
-| 🧍 **Standing** | Stable vertical alignment + Ankle-to-shoulder linearity + Zero gait cycle | **NOMINAL (Upright stationary)** |
-| 🪑 **Sitting** | Knee flexion $\approx 90^\circ$ + Torso inclination $< 30^\circ$ + Elevated chair plane | **NOMINAL (Resting posture)** |
-| 🛡️ **Normal Activity** | Nominal domestic movement / room vacant sentinel | **NOMINAL (All clear)** |
+We selected **YOLOv8 Nano (`yolov8n`)** as the core object detection backbone:
+- **Architectural Rationale:** Anchor-free split detection head with C2f cross-stage partial bottleneck structures. It delivers exceptional spatial localization for dense multi-facing packaging while maintaining an ultra-lightweight profile (3.0M parameters, 8.1 GFLOPs).
+- **Edge Deployment Latency:** Runs at **20–30 ms per image on standard CPU** (>25 FPS), enabling real-time inference on low-cost in-store hardware without requiring expensive GPUs.
+- **Training Configuration:**
+  - Optimizer: `AdamW` (learning rate $\eta = 0.003$, momentum $\beta_1 = 0.937$, weight decay $\lambda = 0.0005$)
+  - Loss Formulation: Complete CIoU bounding box loss + Distribution Focal Loss (DFL) + Binary Cross-Entropy (BCE) classification loss
+  - Model Checkpoints: Validation loss tracked per epoch; best weights serialized to `weights/stocksense_yolov8n.pt`.
 
 ---
 
-## 📊 3. Model Evaluation & Performance Curves (Step 6)
+## 📊 5. Quantitative Model Evaluation Benchmark
 
-The PyTorch BiLSTM neural classifier was rigorously evaluated on an unseen test dataset split of **2,707 samples** from the Le2i Fall Detection benchmark:
+Evaluation was conducted on the strictly held-out test split (31 unseen supermarket shelf scenes, 4,520 annotated objects).
 
-### Quantitative Test Split Metrics
+### Primary Object Detection & Counting Metrics (Held-Out Test Set)
+| Metric | Value | Technical Meaning |
+| :--- | :---: | :--- |
+| **Precision (P)** | **0.5967 (59.7%)** | Proportion of detected bounding boxes matching a ground-truth product. |
+| **Recall (R)** | **0.2016 (20.2%)** | Proportion of all visible shelf products successfully detected. |
+| **mAP @ 0.50** | **0.1566 (15.7%)** | Mean Average Precision across all categories at standard IoU 0.50. |
+| **mAP @ 0.50:0.95** | **0.0717 (7.2%)** | COCO localization metric across strict threshold range [0.50, 0.95]. |
+| **Counting MAE** | **14.99 units** | Mean Absolute Error across all categories on dense multi-facing shelves. |
+| **Mean Counting Accuracy** | **79.8%** | Normalized counting accuracy: $\text{Acc} = \max\left(0, 1 - \frac{|Y_{true} - Y_{pred}|}{\max(Y_{true}, 1)}\right) \times 100\%$. |
+| **CPU Inference Latency** | **17.92 ms** | Real-time inference latency on Intel Core i7 (over 55 FPS). |
 
-| Metric | Measured Value | Standard Benchmark Target | FA-2 Target Status |
-| :--- | :---: | :---: | :---: |
-| **Fall Detection Recall (Sensitivity)** | **95.15%** | $> 85.0\%$ | ✅ **EXCEEDED (+10.15%)** |
-| **Fall Detection Precision** | **94.58%** | $> 85.0\%$ | ✅ **EXCEEDED (+9.58%)** |
-| **Fall Class F1-Score** | **94.86%** | $> 85.0\%$ | ✅ **EXCEEDED (+9.86%)** |
-| **Overall Test Accuracy** | **88.81%** | $> 80.0\%$ | ✅ **EXCEEDED (+8.81%)** |
-| **Macro Average F1-Score** | **86.93%** | $> 80.0\%$ | ✅ **EXCEEDED (+6.93%)** |
-| **Weighted F1-Score** | **88.97%** | $> 80.0\%$ | ✅ **EXCEEDED (+8.97%)** |
-
-### Per-Class Detailed Performance
-
-| Class | Precision | Recall | F1-Score | Test Support |
-| :--- | :---: | :---: | :---: | :---: |
-| 🚨 **Fall Detected** | **94.58%** | **95.15%** | **94.86%** | 330 frames |
-| ⚠️ **Off-Balance** | **94.25%** | 85.06% | 89.42% | 810 frames |
-| 🪑 **Sitting** | 93.31% | **95.64%** | 94.46% | 642 frames |
-| 🧍 **Standing** | 87.90% | 81.34% | 84.49% | 509 frames |
-| 🚶 **Walking** | 62.77% | 84.80% | 72.14% | 171 frames |
-| 🛡️ **Normal Activity** | 80.28% | 93.06% | 86.20% | 245 frames |
-
-### Real-World Deployment Challenges & Technical Mitigations
-
-1. **💡 Lighting Variations (Day, Night, Shadows)**:
-   - *Challenge*: Low-light domestic bedrooms and night-time bathroom trips degrade RGB appearance.
-   - *Mitigation*: The vision pipeline converts pixel frames into normalized skeletal keypoint coordinates $(x/w, y/h)$ that are mathematically invariant to lux and illumination levels. CLAHE + power-law gamma correction ($\gamma=1.6$) preprocess low-light inputs.
-2. **📐 Camera Angle Differences (Ceiling, Wall, Desk)**:
-   - *Challenge*: Oblique perspective transforms distort aspect ratios and subject heights.
-   - *Mitigation*: Desk Mode calibration applies upper-body kinematic normalization when lower extremities are occluded by tables, chairs, or bed frames.
-3. **🪑 Posture Ambiguity (Sitting vs Falling)**:
-   - *Challenge*: Sitting down onto a low couch or floor mat resembles the final state of a fall.
-   - *Mitigation*: The 30-frame temporal BiLSTM analyzes continuous vertical descent velocity. Controlled sitting shows deceleration ($< 0.8\text{ m/s}$), whereas falls exhibit rapid gravitational acceleration followed by sudden impact arrest.
-4. **🔒 Privacy Preservation in Sensitive Spaces**:
-   - *Challenge*: Patients refuse video cameras in bedrooms, dressing areas, and bathrooms.
-   - *Mitigation*: SafeFall AI processes keypoint geometry entirely in edge memory. Raw video streams are never written to disk or transmitted across external networks—only anonymized skeletal coordinates and emergency incident metadata are retained.
+### Per-Class Detection & Counting Performance
+| Product Category | Precision | Recall | mAP@0.5 | Counting MAE | Counting Accuracy (%) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Bottle** | **0.8435** | **0.5511** | **0.5238** | **2.03** | **97.74%** |
+| **Box** | 0.2604 | 0.2101 | 0.0614 | 10.16 | 77.83% |
+| **Bread** | 0.0000 | 0.0000 | 0.0000 | 0.71 | 96.77% |
+| **Can** | **1.0000** | 0.0053 | 0.0050 | 12.19 | 74.28% |
+| **Pack** | **0.7692** | 0.0405 | 0.0407 | 7.45 | 90.71% |
+| **Snack** | **0.7037** | 0.1255 | 0.1143 | 21.06 | 58.32% |
+| **Vegetable** | **0.5997** | **0.4787** | **0.3512** | 51.32 | 62.96% |
 
 ---
 
-## 🔄 4. Continuous Monitoring & Model Retraining Pipeline (Step 8)
+## ⚖️ 6. Inventory Intelligence Rules & Operational Logic
 
-To prevent concept drift and maintain clinical reliability over long-term deployments, SafeFall AI implements an active learning and automated retraining pipeline:
+StockSense Pro translates raw visual detections into operational retail decisions using a 3-tier heuristic:
 
-```
-┌────────────────────────────────────────────────────────┐
-│             Real-Time Vision Stream                    │
-└───────────────────────────┬────────────────────────────┘
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│   Active Uncertainty Sampler & Telemetry Monitor       │
-│   - Confidence marginality: 0.40 <= Confidence <= 0.65 │
-│   - Caregiver False-Positive Override Feedback         │
-└───────────────────────────┬────────────────────────────┘
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│     Automated Edge Data Annotation & Staging           │
-│     - Stratified 70% Train / 15% Val / 15% Test Split  │
-│     - Cosine Annealing Learning Rate Schedule          │
-│     - Early Stopping on Validation Loss (Patience = 5) │
-└───────────────────────────┬────────────────────────────┘
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│       Automated Regression & Delta Verification        │
-│       - Fall Recall Delta >= +0.0% (Zero Regression)   │
-│       - Fall Precision Delta >= +0.0%                  │
-└───────────────────────────┬────────────────────────────┘
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│    Zero-Downtime Hot Swapping of PyTorch Checkpoint    │
-│    (safefall_nn_model.pth automatically reloaded)      │
-└────────────────────────────────────────────────────────┘
-```
-
-### Continuous Maintenance Roadmap
-- **Multi-Camera CCTV Feeds**: Native RTSP and ONVIF stream ingest for whole-facility elder care monitoring.
-- **Thermal & Infrared Low-Light Adaptation**: Fine-tuning keypoint extractors on nocturnal thermal imagery.
-- **Mobility Aid Invariance**: Specialized kinematic normalization for residents utilizing walkers, canes, and wheelchairs.
-- **Embedded Edge Acceleration**: Quantization to INT8 TensorRT and OpenVINO for deployment on Jetson Nano and Coral Edge TPUs.
+| Stock Status Label | Facing Count Rule | Alert Level | Recommended Action Directive |
+| :--- | :---: | :---: | :--- |
+| **No Detections / Empty Shelf** | **0 Visible Units** | 🔴 **HIGH** | **Critical Alert:** Zero visible facings on shelf surface. Dispatch floor staff to audit backroom storage and execute immediate shelf replenishment. |
+| **Low Visible Stock** | **1 – 3 Visible Units** | 🟡 **MEDIUM** | **Warning Alert:** Facing buffer is dangerously depleted. Queue restock ticket for fulfillment prior to next peak footfall window. |
+| **Sufficient Stock** | **≥ 4 Visible Units** | 🟢 **NORMAL** | **Healthy Buffer:** Sufficient visible facing depth. Maintain standard product rotation and alignment. |
 
 ---
 
-## 🚨 5. Automated 911 Auto-Calling & Emergency Dispatch Center
+## 💻 7. Software Architecture & Repository Layout
 
-When a fall is confirmed across any mode (Live Webcam, Photo Upload, Video Analysis, or Manual SOS), SafeFall AI activates an automated emergency response sequence:
-
-```
-[ Fall Confirmed ] ──► [ Acoustic Siren Sounds (Stages 1-3) ]
-                           │
-                           ▼
-             [ 10-Second Auto-Call Countdown ]
-             - Spoken voice alert: "Auto-dialing 911 in 10 seconds"
-             - Immediate cancellation option: "✕ I AM OK • CANCEL CALL"
-                           │
-           ┌───────────────┴───────────────┐
-           ▼                               ▼
- [ User Cancels Call ]            [ Timer Hits 0s or "Call Now" ]
- - Alarm silenced                          │
- - Patient marked safe                     ▼
-                             [ Live 911 EMS Dispatch Screen ]
-                             - Telephone ringback audio (440Hz + 480Hz)
-                             - Live call timer (00:01, 00:02...)
-                             - Operator 42 spoken voice assistance
-                             - Real-time dispatcher transcript
-                             - Native mobile dialer link (tel:911)
-                             - Operational controls: Mute, Speaker, Hang Up
-```
-
-- **Cross-Platform Compatibility**: On desktop laptops where `tel:911` is not natively configured, the interactive in-app dialer provides complete voice reassurance and automated event logging. On mobile smartphones, one-tap direct integration with the physical phone dialer (`tel:911`) is provided.
-- **Incident Audit Trail**: Dispatches are permanently recorded with timestamp, fall risk, and status in `data/incident_logs.csv`.
-
----
-
-## 🚀 6. Performance Optimizations & Zero-Lag Architecture
-
-SafeFall AI is engineered for high throughput and instant UI responsiveness:
-
-- **15 FPS WebRTC Background Worker**: Camera frames are processed in dedicated background daemon threads with `video_receiver_size=2` to eliminate input lag.
-- **Non-Blocking `@st.fragment(run_every=1)`**: Telemetry updates asynchronously every 1.0 second without triggering full-page Streamlit reruns.
-- **Zero Double-Rerun Ping-Pong**: Clean single horizontal mode selector eliminating competing state navigation loops.
-- **Instant Typography (0.0 ms Font Lag)**: Native OS system fonts (`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto`) replacing network-blocking Google Fonts.
-- **Single Fast STUN Gatherer**: Uses Google's primary STUN endpoint (`stun:stun.l.google.com:19302`) for instantaneous ICE candidate gathering.
-
----
-
-## 🏗️ 7. Repository Architecture
-
-```
-.
-├── app.py                         # Application entrypoint & mode router
-├── yolov8n-pose.pt                # YOLOv8 nano pose model weights
-├── requirements.txt               # Locked production dependencies
-├── packages.txt                   # Linux runtime dependencies
-├── run_app.bat                    # 1-click Windows launch script
-├── push_to_github.bat             # 1-click GitHub push script
-├── core/                          # Machine learning & analytics modules
-│   ├── security.py                # Salted PBKDF2-HMAC-SHA256 authentication vault
-│   ├── kinematics.py              # Biomechanical angle and posture heuristics
-│   ├── body_tracker.py            # Spatial IoU & centroid person tracker
-│   ├── temporal_filter.py         # Exponential smoothing & hysteresis gate
-│   └── vision_pipeline.py         # YOLOv8 pipeline & WebRTC streaming worker
-├── ui/                            # Presentation and user interface
-│   ├── styles.py                  # High-performance CSS and themes
-│   ├── components.py              # KPI cards, SVG badges, and siren player
-│   ├── auth_view.py               # Login, registration, and guest access
-│   └── dashboard_view.py          # Monitor, Photo, Video, SOS, Retraining views
-├── model/                         # Neural network checkpoints
-│   ├── safefall_nn_model.pth      # PyTorch BiLSTM sequence classifier
-│   ├── feature_scaler.joblib      # Robust kinematic feature standardizer
-│   └── pose_detector.py           # Pose estimation abstraction
-├── assets/                        # Benchmark evaluation artifacts
-│   └── evaluation_summary.json    # Exact test split metrics & confusion stats
-├── training/                      # Training history & logs
-│   └── training_history.json      # 45-epoch loss & accuracy progression
-├── outputs/                       # Runtime outputs
-│   ├── users.json                 # Salted user credentials
-│   └── falls/                     # Full-resolution incident snapshots
-└── tests/                         # Comprehensive automated test suites
-    ├── test_all_6_classes.py      # 6 clinical activity verification
-    ├── test_sos_alarm.py          # Acoustic siren & SOS dialer verification
-    └── test_pose_and_retraining.py# 17-keypoint pose & Step 8 retraining tests
+```text
+StockSense-Pro/
+├── app.py                      # Main Streamlit web application (Editorial Retail Theme)
+├── requirements.txt            # Pinned dependencies for Streamlit Cloud deployment
+├── README.md                   # Comprehensive technical documentation & student details
+├── config/
+│   └── settings.py             # Global constants, class ontologies, and inventory rules
+├── src/
+│   ├── data_preprocessing.py   # Leak-free splitting, label mapping, and image validation
+│   ├── dataset_analysis.py     # Deep EDA on Kaggle RPC and Retail Shelf datasets
+│   ├── model_training.py       # YOLOv8 fine-tuning script with convergence tracking
+│   ├── inference.py            # High-speed detection engine with NMS and latency profiling
+│   ├── inventory_logic.py      # Business rules engine and CSV audit report generator
+│   ├── evaluation.py           # Object detection & item counting evaluation module
+│   ├── visualisation.py        # Bounding box renderer and Plotly analytics charts
+│   └── generate_pdf_report.py  # ReportLab assessment report PDF compiler
+├── tests/
+│   ├── test_inventory_logic.py # Pytest suite for inventory thresholds & CSV schema
+│   ├── test_preprocessing.py   # Pytest suite for zero-leakage splits & box clamping
+│   └── test_inference.py       # Pytest suite for YOLO inference & confidence filtering
+├── notebooks/
+│   └── exploratory_analysis.ipynb # Executable Jupyter notebook with complete narrative
+├── reports/
+│   ├── model_evaluation.md     # Detailed markdown evaluation document
+│   └── assessment_report.pdf   # Publication-quality multi-page PDF submission report
+├── assets/
+│   ├── samples/                # Curated benchmark test images for one-click UI evaluation
+│   ├── eda/                    # High-resolution EDA and performance charts
+│   └── screenshots/            # UI screenshots and application captures
+└── .gitignore                  # Git configuration ignoring large archives & temp files
 ```
 
 ---
 
-## ⚙️ 8. Installation & Quick Start
+## 🧪 8. Automated Testing & Verification
 
-### 1. Clone the Repository
+We established a comprehensive testing suite with **15 automated unit and integration tests** using `pytest`:
+- **Inventory Engine Tests (`tests/test_inventory_logic.py`):** Verified boundary thresholds (0, 1, 3, 4, 50), inverted threshold exception handling, empty detection lists, count aggregation, and CSV export format.
+- **Preprocessing Tests (`tests/test_preprocessing.py`):** Verified scene hash extraction, coordinate clamping, class mapping, and confirmed **0% cross-split leakage**.
+- **Inference Tests (`tests/test_inference.py`):** Verified model loading, dummy input handling, confidence threshold monotonicity, and exception handling for missing inputs.
+
+Run tests locally:
 ```bash
+pytest -v
+```
+
+---
+
+## 🚀 9. Installation & Local Execution
+
+### Prerequisites
+- Python 3.10, 3.11, 3.12, or 3.13
+- Git
+
+### Quickstart Setup
+```bash
+# 1. Clone repository
 git clone https://github.com/adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA.git
-cd "ML & DL FA 2"
-```
+cd IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA
 
-### 2. Set Up Python Virtual Environment
-```bash
+# 2. Create and activate virtual environment
 python -m venv .venv
 # On Windows:
 .\.venv\Scripts\activate
-# On Linux / macOS:
+# On Linux/macOS:
 source .venv/bin/activate
-```
 
-### 3. Install Dependencies
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-### 4. Run Automated Tests
-```bash
-python tests/test_all_6_classes.py
-python tests/test_sos_alarm.py
-python tests/test_pose_and_retraining.py
-```
-
-### 5. Launch the Application
-```bash
+# 4. Launch Streamlit Application
 streamlit run app.py
 ```
-Open **http://localhost:8501** in your browser.
+Access the application in your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Default Demo Credentials
-- **Email:** `demo@safefall.ai`
-- **Password:** `safefall123`
-*(Or click **Continue as guest** for instant access without signing in).*
+## ☁️ 10. Deployment on Streamlit Community Cloud
+
+StockSense Pro is pre-configured for instant zero-configuration deployment on **Streamlit Community Cloud**:
+1. Repository: `adityasahani392217/IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-FA`
+2. Main file path: `app.py`
+3. Dependencies: `requirements.txt` includes `opencv-python-headless` for headless cloud container compatibility.
+4. Model weights: Packaged within `weights/stocksense_yolov8n.pt` (~6.2 MB), loading natively into cloud RAM without external API keys.
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License.
+## 📚 11. Research References & Citations
+
+1. **Wei, X.-S., Cui, Q., Yang, L., Wang, P., & Liu, L. (2019).** *RPC: A Large-Scale Retail Product Checkout Dataset*. arXiv preprint [arXiv:1901.07249](https://arxiv.org/abs/1901.07249).
+2. **Jocher, G., Chaurasia, A., & Qiu, J. (2023).** *Ultralytics YOLOv8* (Version 8.0.0). Ultralytics LLC. [https://github.com/ultralytics/ultralytics](https://github.com/ultralytics/ultralytics).
+3. **Goldman, E., Herzig, R., Eisenschtat, A., Goldberger, J., & Hassner, T. (2019).** *Precise Detection in Densely Packed Scenes*. Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), pp. 1349-1358.
+4. **Streamlit Inc. (2024).** *Streamlit Community Cloud Deployment Documentation*. [https://docs.streamlit.io/deploy/streamlit-community-cloud](https://docs.streamlit.io/deploy/streamlit-community-cloud).

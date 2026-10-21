@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .pytest_cache/
 .coverage
 htmlcov/
@@ -12,41 +11,32 @@ htmlcov/
 venv/
 ENV/
 env/
-env.bak/
-venv.bak/
 
-# Tunnel and temporary binaries
-cloudflared.exe
+# Executables & Binaries
 *.exe
+cloudflared.exe
 
-# Kaggle Large Video & Image Datasets (Do not upload to Git)
-data/le2i_dataset/
-data/internet_images/
-data/train_dataset.csv
-data/test_dataset.csv
-data/val_dataset.csv
-data/internet_features.csv
-*.avi
-*.mp4
-!data/sample_media/demo_fall_sequence.mp4
+# Temporary training checkpoints & logs
+runs/
+*.log
 
-# Incident snapshots and temp media
-outputs/falls/*.jpg
-outputs/falls/*.png
-!outputs/falls/.gitkeep
+# Large Raw and Extracted Datasets (Do not commit gigabyte archives to GitHub)
+data_investigation/
+data/processed/train/
+data/processed/val/
+data/processed/test/
+*.zip
+*.tar
+*.gz
 
-# IDE and OS
-.idea/
-.vscode/
-*.swp
-*.swo
+# But keep samples and weights
+!assets/samples/
+!assets/eda/
+!weights/stocksense_yolov8n.pt
+
+# OS & IDE
 .DS_Store
 Thumbs.db
 desktop.ini
-*.log
-
-# Legacy code and duplicate root binaries
-archive_legacy/
-/pose_landmarker.task
-outputs/fall_events.csv
-
+.vscode/
+.idea/

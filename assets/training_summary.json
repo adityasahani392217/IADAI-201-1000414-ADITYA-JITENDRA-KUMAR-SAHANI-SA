@@ -1,0 +1,22 @@
+{
+  "model_architecture": "YOLOv8 Nano (yolov8n)",
+  "pretrained_backbone": "yolov8n.pt (COCO pretrained)",
+  "fine_tuned_classes": [
+    "Bottle",
+    "Box",
+    "Bread",
+    "Can",
+    "Pack",
+    "Snack",
+    "Vegetable"
+  ],
+  "num_classes": 7,
+  "epochs": 6,
+  "image_size": 416,
+  "batch_size": 16,
+  "training_time_seconds": 507.54,
+  "device": "cpu",
+  "weights_path": "weights\\stocksense_yolov8n.pt",
+  "weights_size_bytes": 6217066,
+  "completed_at": "2026-10-21 09:48:06"
+}
