@@ -1,19 +1,15 @@
 @echo off
-title StockSense Pro - Retail Shelf Intelligence
+TITLE ParkVision AI - Launch Dashboard
 echo ========================================================
-echo  Starting StockSense Pro Streamlit Application...
-echo  AI-Powered Retail Shelf Intelligence & Product Detection
+echo   ParkVision AI: Smart Parking Intelligence Platform
+echo   CRS Artificial Intelligence Summative Assessment
+echo   Candidate: Aditya Jitendra Kumar Sahani (1000414)
 echo ========================================================
-cd /d "%~dp0"
+echo.
+echo Activating virtual environment and launching Streamlit...
+echo.
 
-if exist ".venv\Scripts\streamlit.exe" (
-    echo Using local virtual environment: .venv
-    ".venv\Scripts\streamlit.exe" run app.py
-) else if exist ".venv\Scripts\python.exe" (
-    echo Using Python module runner: .venv
-    ".venv\Scripts\python.exe" -m streamlit run app.py
-) else (
-    echo Using system Python runner...
-    python -m streamlit run app.py
-)
+cd /d "%~dp0"
+"..\ML & DL FA 2\.venv\Scripts\python.exe" -m streamlit run app.py
+
 pause

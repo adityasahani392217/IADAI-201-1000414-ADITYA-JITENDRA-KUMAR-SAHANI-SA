@@ -1,146 +1,212 @@
 """
-StockSense Pro - Configuration and Settings
-CRS Artificial Intelligence Summative Assessment: Machine Learning and Deep Learning (FA 2)
+ParkVision AI - Global Configuration & Settings
+CRS Artificial Intelligence Summative Assessment: Machine Learning & Deep Learning
 
-Student Name: Aditya Jitendra Kumar Sahani
+Student: Aditya Jitendra Kumar Sahani
 Student ID: 1000414
 School: Aspee Nutan Academy
 Programme: IBCP Artificial Intelligence / Grade 12
-Candidate Session Number: [Candidate Registration / Session Number: To be provided]
+Course: Machine Learning and Deep Learning
 """
 
 from pathlib import Path
-from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from typing import Dict, List, Any
 
-# Base Project Paths
+# Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_DIR = BASE_DIR / "config"
 SRC_DIR = BASE_DIR / "src"
 DATA_DIR = BASE_DIR / "data"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
+PRESETS_DIR = DATA_DIR / "presets"
+SAMPLE_MEDIA_DIR = DATA_DIR / "sample_media"
 WEIGHTS_DIR = BASE_DIR / "weights"
 ASSETS_DIR = BASE_DIR / "assets"
 REPORTS_DIR = BASE_DIR / "reports"
 TESTS_DIR = BASE_DIR / "tests"
 SAMPLES_DIR = ASSETS_DIR / "samples"
 EDA_DIR = ASSETS_DIR / "eda"
-SCREENSHOTS_DIR = ASSETS_DIR / "screenshots"
 
-# Default Model Weights
-DEFAULT_MODEL_PATH = WEIGHTS_DIR / "stocksense_yolov8n.pt"
-PRETRAINED_BACKBONE = "yolov8n.pt"
-
-# Student & Academic Metadata
+# Metadata
 STUDENT_NAME = "Aditya Jitendra Kumar Sahani"
 STUDENT_ID = "1000414"
 SCHOOL_NAME = "Aspee Nutan Academy"
 PROGRAMME = "IBCP Artificial Intelligence / Grade 12"
 COURSE_TITLE = "Machine Learning and Deep Learning"
-PROJECT_TITLE = "StockSense Pro"
-PROJECT_TAGLINE = "AI-Powered Retail Shelf Intelligence & Product Detection System"
+PROJECT_NAME = "ParkVision AI"
+PROJECT_TAGLINE = "Real-Time Smart Parking Intelligence & Space Occupancy Platform"
 CANDIDATE_SESSION_NO = "[Candidate Registration / Session Number: To be provided]"
 
-# Target Retail Product Categories (Standardized 7-Class Schema)
-CLASS_NAMES: List[str] = [
-    "Bottle",       # 0: Beverages, water, sodas, glass/plastic bottles
-    "Box",          # 1: Cartons, cereals, packaged dry goods
-    "Bread",        # 2: Bakery loaves, sliced breads, buns
-    "Can",          # 3: Tinned goods, soda cans, canned provisions
-    "Pack",         # 4: Pouches, sachets, vacuum packs
-    "Snack",        # 5: Chips, crisps, biscuits, bagged snacks
-    "Vegetable"     # 6: Fresh produce, greens, root vegetables
+# Vehicle Object Detection Schema (COCO vehicle class mapping)
+# COCO class IDs: 2: car, 3: motorcycle, 5: bus, 7: truck
+VEHICLE_CLASS_IDS = [2, 3, 5, 7]
+VEHICLE_CLASS_NAMES = {
+    2: "Car",
+    3: "Motorcycle",
+    5: "Bus",
+    7: "Truck"
+}
+
+# Parking Slot Statuses & Design System Palette (Editorial Light Theme)
+SLOT_STATUS_AVAILABLE = "available"
+SLOT_STATUS_OCCUPIED = "occupied"
+SLOT_STATUS_UNCERTAIN = "uncertain"
+
+STATUS_COLORS_HEX = {
+    SLOT_STATUS_AVAILABLE: "#16A34A",  # Emerald Green
+    SLOT_STATUS_OCCUPIED: "#DC2626",   # Crimson Red
+    SLOT_STATUS_UNCERTAIN: "#D97706",  # Amber Orange
+}
+
+STATUS_COLORS_BGR = {
+    SLOT_STATUS_AVAILABLE: (74, 163, 22),   # BGR for OpenCV
+    SLOT_STATUS_OCCUPIED: (38, 38, 220),    # BGR for OpenCV
+    SLOT_STATUS_UNCERTAIN: (6, 119, 217),   # BGR for OpenCV
+}
+
+STATUS_BG_HEX = {
+    SLOT_STATUS_AVAILABLE: "#F0FDF4",
+    SLOT_STATUS_OCCUPIED: "#FEF2F2",
+    SLOT_STATUS_UNCERTAIN: "#FFFBEB",
+}
+
+STATUS_BADGES = {
+    SLOT_STATUS_AVAILABLE: "🟢 Available",
+    SLOT_STATUS_OCCUPIED: "🔴 Occupied",
+    SLOT_STATUS_UNCERTAIN: "🟡 Uncertain",
+}
+
+# Operational Detection Defaults
+DEFAULT_CONFIDENCE_THRESHOLD = 0.35
+DEFAULT_IOA_THRESHOLD = 0.30       # Intersection over Slot Area
+DEFAULT_SMOOTHING_FRAMES = 5       # Temporal window for state confirmation
+DEFAULT_HIGH_CAPACITY_THRESHOLD = 0.85 # Alert when 85% capacity reached
+
+# Model Weights
+DEFAULT_MODEL_NAME = "yolov8n.pt"
+MODEL_WEIGHTS_PATH = WEIGHTS_DIR / "yolov8n.pt"
+
+# Demo Presets: Default 12-Slot Ground Lot Configuration (Normalized [0.0, 1.0])
+DEFAULT_OUTDOOR_PRESET = [
+    {
+        "id": "A01",
+        "polygon": [[0.06, 0.40], [0.18, 0.40], [0.16, 0.65], [0.03, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "A02",
+        "polygon": [[0.20, 0.40], [0.32, 0.40], [0.31, 0.65], [0.18, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "A03",
+        "polygon": [[0.34, 0.40], [0.46, 0.40], [0.46, 0.65], [0.33, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "A04",
+        "polygon": [[0.48, 0.40], [0.60, 0.40], [0.61, 0.65], [0.48, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "A05",
+        "polygon": [[0.62, 0.40], [0.74, 0.40], [0.76, 0.65], [0.63, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "A06",
+        "polygon": [[0.76, 0.40], [0.88, 0.40], [0.91, 0.65], [0.78, 0.65]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "B01",
+        "polygon": [[0.02, 0.70], [0.15, 0.70], [0.13, 0.96], [0.01, 0.96]],
+        "section": "B",
+        "type": "Standard"
+    },
+    {
+        "id": "B02",
+        "polygon": [[0.17, 0.70], [0.30, 0.70], [0.29, 0.96], [0.15, 0.96]],
+        "section": "B",
+        "type": "Standard"
+    },
+    {
+        "id": "B03",
+        "polygon": [[0.32, 0.70], [0.45, 0.70], [0.45, 0.96], [0.31, 0.96]],
+        "section": "B",
+        "type": "Accessible"
+    },
+    {
+        "id": "B04",
+        "polygon": [[0.47, 0.70], [0.60, 0.70], [0.61, 0.96], [0.47, 0.96]],
+        "section": "B",
+        "type": "EV Charging"
+    },
+    {
+        "id": "B05",
+        "polygon": [[0.62, 0.70], [0.75, 0.70], [0.77, 0.96], [0.63, 0.96]],
+        "section": "B",
+        "type": "Standard"
+    },
+    {
+        "id": "B06",
+        "polygon": [[0.77, 0.70], [0.90, 0.70], [0.93, 0.96], [0.79, 0.96]],
+        "section": "B",
+        "type": "Standard"
+    }
 ]
 
-NUM_CLASSES = len(CLASS_NAMES)
-CLASS_TO_IDX: Dict[str, int] = {name: idx for idx, name in enumerate(CLASS_NAMES)}
-IDX_TO_CLASS: Dict[int, str] = {idx: name for idx, name in enumerate(CLASS_NAMES)}
+# Real Commercial Parking Lot Preset (calibrated for real_parking_1.jpg)
+REAL_COMMERCIAL_PRESET: List[Dict[str, Any]] = [
+    {
+        "id": "P01",
+        "polygon": [[0.68, 0.42], [0.99, 0.42], [0.99, 0.83], [0.68, 0.83]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "P02",
+        "polygon": [[0.35, 0.43], [0.69, 0.43], [0.69, 0.72], [0.35, 0.72]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "P03",
+        "polygon": [[0.01, 0.47], [0.14, 0.47], [0.14, 0.58], [0.01, 0.58]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "P04",
+        "polygon": [[0.15, 0.47], [0.32, 0.47], [0.32, 0.61], [0.15, 0.61]],
+        "section": "A",
+        "type": "Standard"
+    },
+    {
+        "id": "P05",
+        "polygon": [[0.30, 0.75], [0.65, 0.75], [0.65, 0.98], [0.30, 0.98]],
+        "section": "B",
+        "type": "EV Charging"
+    },
+    {
+        "id": "P06",
+        "polygon": [[0.02, 0.68], [0.28, 0.68], [0.28, 0.95], [0.02, 0.95]],
+        "section": "B",
+        "type": "Accessible"
+    }
+]
 
-# Class Visual Styling (High contrast, accessible palette)
-CLASS_COLORS: Dict[str, str] = {
-    "Bottle": "#2563EB",     # Royal Blue
-    "Box": "#7C3AED",        # Violet
-    "Bread": "#D97706",      # Amber
-    "Can": "#0D9488",        # Teal
-    "Pack": "#EA580C",       # Deep Orange
-    "Snack": "#DB2777",      # Pink
-    "Vegetable": "#16A34A"   # Emerald Green
-}
+# Indoor Garage Preset
+INDOOR_GARAGE_PRESET: List[Dict[str, Any]] = [
+    {"id": "G01", "polygon": [[0.08, 0.45], [0.22, 0.45], [0.20, 0.75], [0.05, 0.75]], "section": "G", "type": "Standard"},
+    {"id": "G02", "polygon": [[0.24, 0.45], [0.38, 0.45], [0.37, 0.75], [0.22, 0.75]], "section": "G", "type": "Standard"},
+    {"id": "G03", "polygon": [[0.40, 0.45], [0.54, 0.45], [0.54, 0.75], [0.39, 0.75]], "section": "G", "type": "EV Charging"},
+    {"id": "G04", "polygon": [[0.56, 0.45], [0.70, 0.45], [0.71, 0.75], [0.56, 0.75]], "section": "G", "type": "Accessible"},
+    {"id": "G05", "polygon": [[0.72, 0.45], [0.86, 0.45], [0.88, 0.75], [0.73, 0.75]], "section": "G", "type": "Standard"}
+]
 
-# Raw Dataset Mapping (from 11 Roboflow classes to 7 standardized retail categories)
-# Dropping raw class 0 ('-') as background/unlabeled artifact
-RAW_TO_STANDARDIZED_MAP: Dict[int, int] = {
-    1: 0,   # '- Big Bottle' -> Bottle (0)
-    2: 1,   # '- Big Box'    -> Box (1)
-    3: 1,   # '- Box'        -> Box (1)
-    4: 2,   # '- Bread'      -> Bread (2)
-    5: 3,   # '- Can'        -> Can (3)
-    6: 4,   # '- Pack'       -> Pack (4)
-    7: 5,   # '- Snack'      -> Snack (5)
-    8: 6,   # '- Vegetable'  -> Vegetable (6)
-    9: 6,   # '- Vegetable 2'-> Vegetable (6)
-    10: 0   # 'Bottle'       -> Bottle (0)
-}
-
-# Inventory Intelligence Stock Status Thresholds
-@dataclass
-class InventoryThresholds:
-    out_of_stock_max: int = 0      # 0 instances = No visible instances detected
-    low_stock_min: int = 1         # 1 instance
-    low_stock_max: int = 3         # 3 instances
-    sufficient_stock_min: int = 4  # 4+ instances = Healthy facing count
-
-DEFAULT_THRESHOLDS = InventoryThresholds()
-
-# Stock Status Labels & Severity
-STATUS_OUT_OF_STOCK = "No Detections / Empty Shelf"
-STATUS_LOW_STOCK = "Low Visible Stock"
-STATUS_SUFFICIENT = "Sufficient Stock"
-
-STATUS_COLORS = {
-    STATUS_OUT_OF_STOCK: "#DC2626",  # Red
-    STATUS_LOW_STOCK: "#D97706",     # Amber
-    STATUS_SUFFICIENT: "#16A34A"     # Green
-}
-
-STATUS_ICONS = {
-    STATUS_OUT_OF_STOCK: "🔴",
-    STATUS_LOW_STOCK: "🟡",
-    STATUS_SUFFICIENT: "🟢"
-}
-
-STATUS_RECOMMENDATIONS = {
-    STATUS_OUT_OF_STOCK: "Immediate Restock: Zero visible facings on shelf. Audit backroom storage and dispatch replenishment immediately.",
-    STATUS_LOW_STOCK: "Replenish Soon: Visible shelf inventory is running low. Queue restock before peak customer footfall.",
-    STATUS_SUFFICIENT: "Healthy Stock: Sufficient facing volume detected. Maintain standard rotation and routine facing alignment."
-}
-
-# Inference Defaults
-DEFAULT_CONF_THRESHOLD = 0.35
-DEFAULT_IOU_THRESHOLD = 0.45
-DEFAULT_IMAGE_SIZE = 640
-
-# Primary and Supplementary Dataset References
-PRIMARY_DATASET_NAME = "Retail Product Checkout (RPC) Dataset"
-PRIMARY_DATASET_URL = "https://www.kaggle.com/datasets/diyer22/retail-product-checkout-dataset"
-PRIMARY_DATASET_PAPER = "Wei et al., 'RPC: A Large-Scale Retail Product Checkout Dataset', arXiv:1901.07249 (2019)"
-PRIMARY_DATASET_LICENSE = "Creative Commons CC-BY-NC-SA 4.0"
-
-SUPPLEMENTARY_DATASET_NAME = "Retail Shelf Detection Benchmark"
-SUPPLEMENTARY_DATASET_URL = "https://universe.roboflow.com/kickkung/shelf-detection-for-coco-format/dataset/2"
-SUPPLEMENTARY_DATASET_LICENSE = "Creative Commons CC BY 4.0 / MIT"
-
-# Editorial Light Theme UI Colors
-THEME = {
-    "bg_main": "#F8FAFC",
-    "bg_card": "#FFFFFF",
-    "text_primary": "#0F172A",
-    "text_secondary": "#475569",
-    "text_muted": "#94A3B8",
-    "border_card": "#E2E8F0",
-    "accent_primary": "#2563EB",
-    "accent_secondary": "#3B82F6",
-    "status_danger": "#DC2626",
-    "status_warning": "#D97706",
-    "status_success": "#16A34A"
-}

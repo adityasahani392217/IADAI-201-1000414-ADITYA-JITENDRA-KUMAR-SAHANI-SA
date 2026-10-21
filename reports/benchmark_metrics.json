@@ -1,0 +1,38 @@
+{
+  "total_eval_samples": 18,
+  "true_positives": 10,
+  "true_negatives": 8,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "specificity": 1.0,
+  "f1_score": 1.0,
+  "mean_latency_ms": 21.15,
+  "effective_fps": 47.3,
+  "device": "0",
+  "per_scene": {
+    "Commercial Lot CCTV (real_parking_1.jpg)": {
+      "total_slots": 6,
+      "correct": 6,
+      "accuracy": 1.0,
+      "vehicles_detected": 3,
+      "latency_ms": 39.92
+    },
+    "Angle Bay Facility (real_parking_2.jpg)": {
+      "total_slots": 6,
+      "correct": 6,
+      "accuracy": 1.0,
+      "vehicles_detected": 5,
+      "latency_ms": 9.98
+    },
+    "Urban Curb Parking (real_parking_3.jpg)": {
+      "total_slots": 6,
+      "correct": 6,
+      "accuracy": 1.0,
+      "vehicles_detected": 4,
+      "latency_ms": 13.54
+    }
+  }
+}

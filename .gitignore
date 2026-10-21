@@ -1,42 +1,37 @@
-# Python Bytecode & Cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Testing & Cache
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Virtual Environments
-.venv/
-venv/
-ENV/
-env/
-
-# Executables & Binaries
-*.exe
-cloudflared.exe
-
-# Temporary training checkpoints & logs
-runs/
-*.log
-
-# Large Raw and Extracted Datasets (Do not commit gigabyte archives to GitHub)
-data_investigation/
-data/processed/train/
-data/processed/val/
-data/processed/test/
-*.zip
-*.tar
-*.gz
-
-# But keep samples and weights
-!assets/samples/
-!assets/eda/
-!weights/stocksense_yolov8n.pt
-
-# OS & IDE
-.DS_Store
-Thumbs.db
-desktop.ini
-.vscode/
-.idea/
+# Temporary media
+temp_*
+test_real.jpg
+test_parking.png

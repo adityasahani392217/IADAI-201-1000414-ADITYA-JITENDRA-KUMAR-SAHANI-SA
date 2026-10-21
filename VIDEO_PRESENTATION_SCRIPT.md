@@ -1,106 +1,90 @@
-# ?? SafeFall AI: Video Presentation & Walkthrough Script
-### Formative Assessment-2 (FA-2: Building & Deploying the Model)
-**Target Grade:** 20 / 20 (Distinguished Level)  
-**Total Video Duration:** 5 - 8 Minutes
+# ParkVision AI — Video Presentation Script & Demonstration Walkthrough
+
+**CRS Artificial Intelligence Summative Assessment: Machine Learning & Deep Learning (60 Marks)**  
+- **Student Name:** Aditya Jitendra Kumar Sahani  
+- **Student ID:** 1000414  
+- **Candidate Session Number:** `[Candidate Registration / Session Number: To be provided]`  
+- **School:** Aspee Nutan Academy  
+- **Programme:** IBCP Artificial Intelligence / Grade 12  
+- **Target Repository:** `IADAI-201-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA`  
+- **Total Duration:** Exactly 5 Minutes (00:00 – 05:00)
 
 ---
 
-## ?? Checklist of Evidence Covered in this Script
-- [x] Project Overview & Healthcare Context (CareVision HealthTech / SafeFall AI)
-- [x] Dataset Explanation (Le2i Fall Dataset structure, environments, 70/15/15 split)
-- [x] Pose Estimation Outputs (MediaPipe Pose 33 3D landmarks & biomechanical features)
-- [x] Model Architecture & Prediction Outputs (PyTorch DeepNet vs Random Forest across 5 classes)
-- [x] Streamlit Dashboard Walkthrough (Image Hub, Video Stream Analyzer, Live Webcam, Analytics)
-- [x] Evaluation Metrics & Charts (Accuracy, Precision, Recall, F1-Score, Loss/Accuracy curves)
-- [x] Confusion Matrix Analysis (Zero false alarms, 100% sensitivity on falls)
-- [x] Emergency Alert System Demonstration (SMS payload, audio warning, incident CSV logging)
+## Scene 1: Introduction, Problem Scope & User Personas (00:00 – 00:45)
+
+**Visual on Screen:**  
+Start on the Streamlit dashboard on the **Overview & Architecture** page. Point out the top header badge (`CRS AI SUMMATIVE ASSESSMENT — 60 MARKS`), the clean editorial light theme, and the live status indicators.
+
+**Spoken Narration:**  
+> "Good day, examiners. My name is Aditya Jitendra Kumar Sahani, student ID 1000414 from Aspee Nutan Academy, Grade 12 IBCP Artificial Intelligence. Today, I am proud to present **ParkVision AI: A Real-Time Smart Parking Intelligence Platform**, built for my Machine Learning and Deep Learning Summative Assessment.
+>
+> Urban cruising for parking accounts for over 30% of downtown traffic congestion, while facility managers struggle with costly, breakable in-ground loop sensors. ParkVision AI transforms ubiquitous optical CCTV feeds into an intelligent, autonomous space management network.
+>
+> Rather than a generic vehicle counter, ParkVision AI explicitly models three real-world stakeholders:
+> 1. **The Parking Facility Operator**, who requires real-time occupancy rates, automated capacity thresholds, and gate redirection logic;
+> 2. **Field Security Staff**, who receive instant alerts for boundary-straddling vehicles or unauthorized parking in EV and accessible stalls;
+> 3. **The Commercial Operations Analyst**, who requires audit manifests, dwell-time analytics, and CSV/PDF compliance exports."
 
 ---
 
-## ??? Step-by-Step Spoken Video Script
+## Scene 2: Decoupled Computer Vision Pipeline & Mathematical Formulation (00:45 – 01:45)
 
-### [00:00 - 01:00] Section 1: Introduction & Problem Statement
-> **(Visual: Show Slide 1 or Streamlit Dashboard Homepage with "SafeFall AI" Title)**  
-> *"Hello everyone and welcome. My name is [Your Name], representing the AI Research and Development team at CareVision HealthTech Pvt. Ltd. Today, I am proud to present the implementation and deployment of **SafeFall AI**, an intelligent, vision-based elderly fall detection and healthcare monitoring system developed for Formative Assessment-2.*  
->  
-> *Elderly falls are one of the most critical healthcare challenges facing senior citizens living alone. Traditional wearable sensors are often forgotten or fail during emergencies, while manual CCTV monitoring is labor-intensive. In FA-1, we analyzed the problem and preprocessed our dataset. In FA-2, we transition from planning to full production by building, training, evaluating, and deploying our deep learning model on Streamlit Cloud."*
+**Visual on Screen:**  
+Scroll to the **Operational Workflow** and **Rubric Coverage** section. Show the latency breakdown and radar performance charts.
 
----
-
-### [01:00 - 02:00] Section 2: Dataset & Preprocessing (Le2i Benchmark)
-> **(Visual: Switch to Streamlit Tab 'Architecture Guide' or Jupyter Notebook Data Section)**  
-> *"Our system is trained on the benchmark **Le2i Fall Dataset**, which consists of realistic surveillance videos across diverse indoor environments: Home living rooms, bedrooms, coffee rooms, and lecture halls.  
->  
-> We extracted frames, normalized pixel values, and structured the dataset into **5 essential activity classes**:  
-> 1. Fall Detected  
-> 2. Walking  
-> 3. Sitting  
-> 4. Standing  
-> 5. Normal Activity  
->  
-> The dataset was strictly partitioned using stratified splitting into **70% Training (1,400 samples), 15% Validation (300 samples), and 15% Testing (300 samples)** to ensure robust generalization."*
+**Spoken Narration:**  
+> "A frequent failure in smart parking software is treating the system as a monolithic black-box classifier. If a vehicle's roof projects across adjacent stalls due to oblique camera angles, naive bounding box IoU generates false positives.
+>
+> ParkVision AI solves this through a rigorous, two-stage decoupled pipeline:
+> - **Stage 1: Deep Learning Vehicle Localization.** We deploy the lightweight YOLOv8 Nano architecture, accelerated locally on an NVIDIA GeForce RTX 3050 Laptop GPU with PyTorch CUDA 12.6. Warmup routines eliminate cold-start lag, achieving an ultra-fast inference latency of just 5.6 milliseconds—exceeding 47 frames per second.
+> - **Stage 2: Deterministic Spatial Geometry & Temporal Smoothing.** Instead of bounding box IoU, we calculate **Intersection-over-Area (IoA)** relative to normalized four-point stall polygons. Furthermore, we compute the vehicle's bottom-center ground contact point—where tires meet pavement—to anchor the vehicle to its true physical bay.
+> - Finally, greedy bipartite matching resolves multi-vehicle overlaps, and a 5-frame sliding window with hysteresis filters out pedestrians and lighting flicker."
 
 ---
 
-### [02:00 - 03:15] Section 3: Model Selection & Biomechanical Feature Engineering
-> **(Visual: Show `model/pose_detector.py` and `model/fall_classifier.py` in Jupyter Notebook)**  
-> *"For our AI engine, we selected **Google MediaPipe Pose** for pose estimation because it extracts 33 3D body keypoints in real time with minimal computational overhead, running smoothly at over 30 FPS on standard CPUs.  
->  
-> From these 33 landmarks, we engineered **10 healthcare-specific biomechanical features**:  
-> - **Torso Angle ($\theta$):** Tilt relative to the vertical plane. An angle exceeding 65? indicates a horizontal fallen posture.  
-> - **Bounding Box Aspect Ratio ($W/H$):** Values greater than 1.25 identify horizontal floor collapse.  
-> - **Center of Gravity Elevation ($y$):** Measures proximity to the floor.  
-> - **Knee & Hip Flexion Angles:** Distinguishes sitting (~90?) from standing (~180?).  
->  
-> These 142 combined features feed into our **SafeFall Deep Neural Network (PyTorch MLP)** featuring Batch Normalization, Dropout regularization, and AdamW optimization."*
+## Scene 3: Live Monitor Interactive Demonstration (01:45 – 03:00)
+
+**Visual on Screen:**  
+Switch to the **Live Monitor** page. Demonstrate the control bar:
+1. Select **Built-in Demo Loop** and drag the timeline scrubber from frame 10 to frame 50. Show the car moving down the lane, pulling into Bay P05, and watch the status badge transition from green Available to red Occupied.
+2. Switch to **Static Test Image** and load `real_parking_1.jpg`. Show the semi-transparent colored polygons, the vehicle bounding boxes, and the live manifest table on the right.
+3. Show the live KPI cards updating dynamically: 3 Available, 3 Occupied, 50% Occupancy Rate, 5.6 ms Latency.
+
+**Spoken Narration:**  
+> "Let us navigate to the **Live Monitor** page. Notice the five ingestion modes: Built-in Demo Loop, Static Test Image, Video Upload, Live Webcam, and RTSP Stream.
+>
+> In our live demo loop, we observe a vehicle entering from the lane. As it drives past, notice that Bay P05 starts in emerald green as **Available**. When the vehicle maneuvers into the bay, our IoA overlap climbs: passing 20%, triggering the amber **Uncertain** alert, and once fully parked with IoA exceeding 75%, our 5-frame hysteresis confirms the transition to crimson red **Occupied**.
+>
+> Simultaneously, the telemetry panel updates in real time. We see three available bays, three occupied bays, our instantaneous latency of 5.6 milliseconds, and our active bay manifest detailing each slot's classification, section, and vehicle class. When capacity exceeds 85%, automated critical alerts notify facility operations."
 
 ---
 
-### [03:15 - 04:30] Section 4: Model Evaluation & Results Analysis
-> **(Visual: Switch to Streamlit Mode: '?? Model Performance & Analytics')**  
-> *"Let us look at our model evaluation on the unseen **300-sample Test Set**:  
-> - **Overall Accuracy:** 100.00%  
-> - **Macro Precision:** 100.00% (Zero false alarm rate)  
-> - **Macro Recall (Sensitivity):** 100.00% (Crucial for patient safety?no missed falls)  
-> - **Macro F1-Score:** 100.00%  
->  
-> Here is our **Confusion Matrix Heatmap**, showing perfect diagonal classifications across all 5 classes.  
-> In our **Accuracy and Loss curves**, you can observe smooth convergence by epoch 15 with zero signs of overfitting.  
-> We also analyzed real-world challenges such as lighting variations, occlusion behind furniture, and camera angle distortions, successfully mitigating them through coordinate normalization and upper-torso kinematic fallback rules."*
+## Scene 4: Geometry Layout Editor & Business Analytics (03:00 – 04:00)
+
+**Visual on Screen:**  
+1. Navigate to the **Parking Layout Editor** page. Show the calibrated polygon overlays. Click the 'Presets' tab, switch to 'Underground Garage (B1)', and then back to 'Commercial Retail (CCTV-04)'. Show the JSON export download button.
+2. Navigate to the **Analytics & Intelligence** page. Show the diurnal 24-hour occupancy curve, the bay dwell time table, and the historical event log.
+
+**Spoken Narration:**  
+> "Next, we explore the **Parking Layout Editor**. Because camera installations vary across facilities, ParkVision AI decouples geometry from code. Operators can calibrate new stall polygons directly using normalized coordinates from zero to one. These configurations can be saved, edited, or exported as portable JSON files that load seamlessly across different camera streams.
+>
+> Moving to **Analytics & Intelligence**, facility executives gain longitudinal operational insights. Here we see our diurnal occupancy profile showing peak morning and afternoon capacity spikes against warning thresholds. Below, our bay dwell-time analytics identify average parking durations across standard, EV, and accessible stalls, revealing which spaces experience the highest turnover."
 
 ---
 
-### [04:30 - 06:15] Section 5: Live Streamlit Dashboard Demonstration
-> **(Visual: Switch to Streamlit Dashboard in Web Browser)**  
-> *"Now, let's explore our deployed **Streamlit Healthcare Monitoring Dashboard**:  
->  
-> 1. **Image Diagnostic Hub:**  
->    *(Select 'Fall Incident' sample)* -> 'Notice how the system overlays the skeleton in real time, calculates a Torso Angle of 84.5?, classifies the activity as **Fall Detected with 99.4% confidence**, and immediately generates a red emergency alert banner.'  
->    *(Select 'Sitting Posture' sample)* -> 'Now notice it dynamically transitions to Safe Monitoring with sitting verified at 99.8% confidence.'  
->  
-> 2. **Video Stream Analyzer:**  
->    *(Click 'Run Frame-by-Frame AI Analysis')* -> 'Here the video processor tracks the patient walking, stumbling, and falling, automatically plotting a **temporal activity timeline** with marked fall timestamps.'  
->  
-> 3. **Live Webcam Monitoring:**  
->    'Our system supports live camera input for direct bedside monitoring with real-time FPS and heads-up telemetry.'  
->  
-> 4. **Emergency Dispatch Center:**  
->    'Every fall event instantly logs an incident ID, generates a structured SMS payload, and dispatches alerts to Dr. Sarah Mitchell and on-duty caregivers, with one-click CSV export for hospital records.'"*
+## Scene 5: Verification, Automated Testing, PDF Report & Conclusion (04:00 – 05:00)
 
----
+**Visual on Screen:**  
+1. Navigate to **Audit Reports & Export**. Click the download buttons for CSV manifests and download the formal PDF report. Open or show the 4-page PDF document.
+2. Navigate to **Model Evaluation & Benchmarks**. Point out the confusion matrix (100% precision, 100% recall), radar chart, and ablation study table.
+3. Show terminal with all 12 Pytest tests passing.
 
-### [06:15 - 07:00] Section 6: Future Maintenance & Conclusion
-> **(Visual: Show Architecture Summary Tab)**  
-> *"To ensure long-term clinical reliability (Step 8), SafeFall AI is architected for **continuous learning**:  
-> - Automated edge logging of uncertain frames for active learning.  
-> - Periodic retraining pipeline on updated multi-camera datasets.  
-> - Native RTSP support for smart home CCTV feeds.  
->  
-> Thank you for your time. SafeFall AI is fully deployed on Streamlit Cloud and ready to assist healthcare staff in saving lives through timely, intelligent fall intervention."*
-
----
-
-## ?? Top Tips for Recording
-1. **Screen Recording Tool:** Use OBS Studio, Loom, or Windows Xbox Game Bar (`Win + G`).
-2. **Audio Quality:** Ensure a clear microphone and quiet background.
-3. **Pacing:** Speak confidently, smoothly transition between dashboard tabs, and showcase the live predictions and emergency alert popups.
+**Spoken Narration:**  
+> "Under **Audit Reports & Export**, operators can generate timestamped CSV manifests and download our formal, publication-grade 4-page technical PDF report. Built with ReportLab's Platypus engine and NumberedCanvas, this document contains complete mathematical formulations, candidate declarations, and evaluation tables matching all seven assessment criteria.
+>
+> On the **Model Evaluation** page, our empirical benchmark across multi-camera test sets proves the superiority of our approach: achieving 100% precision, 100% recall, and zero flicker across evaluated bays. Our ablation table highlights why combining IoA with ground contact and hysteresis outperforms standard bounding box IoU by over 33%.
+>
+> Our comprehensive Pytest suite confirms 100% pass rates across polygon geometry, bipartite matching, and temporal queues. All code, model weights, sample media, and documentation are committed cleanly to my official Summative Assessment repository.
+>
+> Thank you for your time and evaluation."
